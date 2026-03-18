@@ -100,6 +100,12 @@ export const InputGroup = styled.div`
     }
   }
 
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }

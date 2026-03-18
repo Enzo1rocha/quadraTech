@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   DashboardContainer, Header, WelcomeTitle, DateSubtitle, ActionButton, 
   StatsGrid, StatCard, StatHeader, StatValue, 
@@ -23,6 +24,7 @@ interface Reservation {
 export function Dashboard() {
   // Estado 1: Controle de dias (0 = hoje, -1 = ontem, 1 = amanhã)
   const [dayOffset, setDayOffset] = useState(0);
+  const navigate = useNavigate();
 
   // Estado 2: Controle da Gaveta (Drawer)
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
@@ -59,7 +61,7 @@ export function Dashboard() {
           <WelcomeTitle>Olá, Professor Fernando! 👋</WelcomeTitle>
           <DateSubtitle>Terça-feira, 24 de Outubro</DateSubtitle>
         </div>
-        <ActionButton>
+        <ActionButton onClick={() => {navigate("/nova-reserva")}}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           Nova Reserva
         </ActionButton>
