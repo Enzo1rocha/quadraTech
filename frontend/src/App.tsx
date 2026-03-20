@@ -9,6 +9,10 @@ import Dashboard from './pages/Dashboard';
 import NewReservation from './pages/NewReservation';
 import ClassesAndMaterials from './pages/ClassesAndMaterials';
 import CourtsAndSpaces from './pages/CourtsAndSpaces';
+import TeamAndCommunication from './pages/TeamAndComunication';
+import History from './pages/History';
+import Help from './pages/Help';
+import NotFound from './pages/NotFound';
 import { DefaultLayout } from './layouts/DefaultLayout';
 
 function App() {
@@ -24,8 +28,11 @@ function App() {
           <Route path="/nova-reserva" element={<NewReservation />} />
           <Route path="/turmas-materiais" element={<ClassesAndMaterials />} />
           <Route path="/quadras" element={<CourtsAndSpaces />} />
-          <Route path="/historico" element={<h1>Histórico</h1>} />
+          <Route path="/equipe" element={<TeamAndCommunication />} />
+          <Route path="/historico" element={<History />} />
+          <Route path="/ajuda" element={<Help />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </ThemeProvider>
   );
