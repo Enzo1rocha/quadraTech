@@ -10,6 +10,10 @@ export const PageContainer = styled.div`
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
 `;
 
 export const PageHeader = styled.header`
@@ -21,19 +25,31 @@ export const PageHeader = styled.header`
 
   h1 {
     font-size: 28px;
-    font-weight: 800;
+    font-weight: 700;
     color: ${({ theme }) => theme.colors.text};
     letter-spacing: -0.5px;
   }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    h1 {
+      font-size: 24px;
+    }
+  }
 `;
 
-/* --- CONTROLE DE ABAS (TABS) --- */
 export const TabsContainer = styled.div`
   display: flex;
   background-color: #F1F5F9;
   padding: 4px;
   border-radius: 12px;
   width: fit-content;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 export const TabButton = styled.button<{ $isActive: boolean }>`
@@ -44,6 +60,7 @@ export const TabButton = styled.button<{ $isActive: boolean }>`
   font-weight: 600;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -52,14 +69,16 @@ export const TabButton = styled.button<{ $isActive: boolean }>`
   color: ${({ $isActive, theme }) => ($isActive ? theme.colors.primary : '#64748B')};
   box-shadow: ${({ $isActive }) => ($isActive ? '0 2px 8px rgba(0,0,0,0.05)' : 'none')};
 
-  svg { width: 18px; height: 18px; }
-
   &:hover {
     color: ${({ theme, $isActive }) => (!$isActive ? theme.colors.text : theme.colors.primary)};
   }
+
+  @media (max-width: 768px) {
+    flex: 1; /* Faz as abas dividirem o espaço 50/50 no mobile */
+    padding: 10px 16px;
+  }
 `;
 
-/* --- BARRA DE FERRAMENTAS (BUSCA E BOTÃO NOVO) --- */
 export const Toolbar = styled.div`
   display: flex;
   justify-content: space-between;
@@ -86,7 +105,7 @@ export const Toolbar = styled.div`
       box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primary}20;
     }
 
-    svg { color: #94A3B8; width: 18px; height: 18px; }
+    svg { color: #94A3B8; width: 18px; height: 18px; flex-shrink: 0; }
     
     input {
       border: none;
@@ -110,20 +129,39 @@ export const Toolbar = styled.div`
     font-size: 14px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
 
     &:hover { background: ${({ theme }) => theme.colors.primaryHover || '#004A80'}; }
-    svg { width: 18px; height: 18px; }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 16px;
+
+    .search-box {
+      width: 100%;
+    }
+
+    button.action-btn {
+      width: 100%;
+    }
   }
 `;
 
-/* --- GRID GENÉRICO PARA OS CARDS --- */
 export const ContentGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  /* Diminui o minmax no celular para evitar quebra horizontal */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
+
+  @media (max-width: 768px) {
+    gap: 16px;
+    grid-template-columns: 1fr; /* Força 1 coluna no celular */
+  }
 `;
 
 /* --- CARD DE TURMA --- */
@@ -141,6 +179,7 @@ export const ClassCard = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 12px;
 
     h3 { 
       font-size: 18px; 
@@ -157,7 +196,6 @@ export const ClassCard = styled.div`
       margin-top: 4px;
     }
 
-    /* O estilo da badge entra aqui dentro do header! */
     .shift-badge {
       font-size: 11px;
       font-weight: 700;
@@ -165,10 +203,11 @@ export const ClassCard = styled.div`
       border-radius: 6px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      flex-shrink: 0;
 
-      &.manhã { background: #FFF7ED; color: #C2410C; } /* Laranja claro */
-      &.tarde { background: #EFF6FF; color: #1D4ED8; } /* Azul claro */
-      &.noite { background: #F8FAFC; color: #334155; } /* Cinza escuro */
+      &.manhã { background: #FFF7ED; color: #C2410C; }
+      &.tarde { background: #EFF6FF; color: #1D4ED8; }
+      &.noite { background: #F8FAFC; color: #334155; }
     }
   }
 
@@ -182,7 +221,7 @@ export const ClassCard = styled.div`
     padding: 12px;
     border-radius: 10px;
 
-    svg { color: ${({ theme }) => theme.colors.primary}; width: 16px; height: 16px; }
+    svg { color: ${({ theme }) => theme.colors.primary}; width: 16px; height: 16px; flex-shrink: 0; }
   }
 
   .footer {
@@ -200,14 +239,10 @@ export const ClassCard = styled.div`
       padding: 4px 10px;
       border-radius: 20px;
     }
+  }
 
-    button {
-      background: none;
-      border: none;
-      color: #94A3B8;
-      cursor: pointer;
-      &:hover { color: ${({ theme }) => theme.colors.text}; }
-    }
+  @media (max-width: 768px) {
+    padding: 20px;
   }
 `;
 
@@ -236,6 +271,7 @@ export const MaterialCard = styled.div`
     align-items: center;
     justify-content: center;
     border-radius: 12px;
+    flex-shrink: 0;
   }
 
   .details {
@@ -249,13 +285,14 @@ export const MaterialCard = styled.div`
 export const ModalOverlay = styled.div`
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15, 23, 42, 0.6); /* Fundo escuro transparente */
+  background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 999;
   animation: fadeIn 0.2s ease-out;
+  padding: 16px; /* Adiciona respiro nas bordas do celular */
 `;
 
 export const ModalContent = styled.div`
@@ -266,6 +303,8 @@ export const ModalContent = styled.div`
   padding: 24px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   animation: slideUp 0.3s ease-out;
+  max-height: 90vh; /* Impede de vazar a tela */
+  overflow-y: auto; /* Permite scroll se for muito alto */
 
   @keyframes slideUp {
     from { opacity: 0; transform: translateY(20px); }
@@ -284,6 +323,15 @@ export const ModalContent = styled.div`
     gap: 16px;
   }
 
+  .form-row {
+    display: flex;
+    gap: 16px;
+
+    .input-group {
+      flex: 1;
+    }
+  }
+
   .input-group {
     display: flex;
     flex-direction: column;
@@ -297,7 +345,12 @@ export const ModalContent = styled.div`
       border-radius: 10px;
       font-size: 14px;
       outline: none;
-      &:focus { border-color: ${({ theme }) => theme.colors.primary}; }
+      width: 100%;
+      background-color: #F8FAFC;
+      &:focus { 
+        border-color: ${({ theme }) => theme.colors.primary};
+        background-color: #FFFFFF; 
+      }
     }
   }
 
@@ -313,18 +366,40 @@ export const ModalContent = styled.div`
       font-weight: 600;
       cursor: pointer;
       font-size: 14px;
+      transition: all 0.2s;
     }
 
     button.cancel {
       background: transparent;
       border: 1px solid #E2E8F0;
       color: #64748B;
+      &:hover { background: #F8FAFC; }
     }
 
     button.save {
       background: ${({ theme }) => theme.colors.primary};
       border: none;
       color: white;
+      &:hover { filter: brightness(0.9); }
+    }
+  }
+
+  /* Responsividade do Modal */
+  @media (max-width: 768px) {
+    padding: 20px;
+
+    .form-row {
+      flex-direction: column; /* Quebra os campos para ficarem um embaixo do outro */
+      gap: 16px;
+    }
+
+    .modal-actions {
+      flex-direction: column-reverse; /* Empilha os botões: Salvar em cima, Cancelar embaixo */
+      
+      button {
+        width: 100%;
+        padding: 14px; /* Aumenta a área de toque no celular */
+      }
     }
   }
 `;

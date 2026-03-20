@@ -1,35 +1,88 @@
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 
-export const SidebarContainer = styled.aside`
+// Adicionamos o $isOpen aqui
+export const SidebarContainer = styled.aside<{ $isOpen?: boolean }>`
   width: 280px;
   height: 100vh;
   background-color: ${({ theme }) => theme.colors.surface};
-  /* Trocamos a borda sólida por uma sombra/linha super suave */
   box-shadow: 1px 0 10px rgba(0, 0, 0, 0.02);
   border-right: 1px solid rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-  padding: 32px 20px 24px; /* Mais respiro no topo */
+  padding: 32px 20px 24px;
+  
+  /* --- MÁGICA DA RESPONSIVIDADE AQUI --- */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  @media (max-width: 768px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    /* Se não estiver aberto, empurra 100% pra esquerda (fora da tela) */
+    transform: ${({ $isOpen }) => ($isOpen ? 'translateX(0)' : 'translateX(-100%)')};
+  }
+`;
+
+// Fundo escuro para mobile
+export const Overlay = styled.div<{ $isOpen?: boolean }>`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+    opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
+    visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
+    transition: all 0.3s ease;
+  }
+`;
+
+// Botão de fechar (X) que só aparece no mobile
+export const CloseButton = styled.button`
+  display: none;
+  background: transparent;
+  border: none;
+  color: ${({ theme }) => theme.colors.text};
+  cursor: pointer;
+  padding: 4px;
+
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 export const LogoArea = styled.div`
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: space-between; /* Ajustado para caber o botão X */
   font-size: 24px;
   font-weight: 800;
   color: ${({ theme }) => theme.colors.primary};
-  margin-bottom: 48px; /* Mais espaço antes de começar o menu */
+  margin-bottom: 48px;
   padding: 0 12px;
-  letter-spacing: -0.5px; /* Deixa o texto da logo mais sofisticado */
+  letter-spacing: -0.5px;
 
-  div {
-    width: 34px;
-    height: 34px;
-    background: linear-gradient(135deg, ${({ theme }) => theme.colors.primary}, ${({ theme }) => theme.colors.primaryHover});
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 86, 145, 0.2); /* Sombra colorida na logo */
+  .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    div {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, ${({ theme }) => theme.colors.primary}, ${({ theme }) => theme.colors.primaryHover});
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 86, 145, 0.2);
+    }
   }
 `;
 

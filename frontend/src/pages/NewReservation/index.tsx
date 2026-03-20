@@ -58,20 +58,20 @@ export function NewReservation() {
     e.preventDefault();
 
     if (formData.endTime <= formData.startTime) {
-      alert("Opcional: Mostre um toast bonitinho de erro aqui!");
-      alert('Erro: O horário de término deve ser depois do início.');
+      alert('Erro: O horário de término deve ser depois do horário de início.');
       return; // Trava o envio
     }
 
     console.log('Dados da Reserva:', formData);
+    console.log('Materiais:', selectedMaterials);
     alert('Reserva criada com sucesso!');
     // Aqui no futuro você faria a chamada para a sua API (ex: axios.post)
+    navigate(-1); // Volta para a tela anterior após o sucesso
   };
 
   return (
     <PageContainer>
       <PageHeader>
-        {/* Aqui você usaria o useNavigate do react-router-dom para voltar de verdade */}
         <button className="back-btn" onClick={() => navigate(-1)} title="Voltar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         </button>

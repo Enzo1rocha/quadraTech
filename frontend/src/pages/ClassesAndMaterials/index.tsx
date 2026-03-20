@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   PageContainer, PageHeader, TabsContainer, TabButton,
   Toolbar, ContentGrid, ClassCard, MaterialCard,
-  ModalOverlay, ModalContent // <-- Nossos novos estilos do modal
+  ModalOverlay, ModalContent
 } from './styles';
 
 export function ClassesAndMaterials() {
@@ -13,7 +13,7 @@ export function ClassesAndMaterials() {
   const [isClassModalOpen, setIsClassModalOpen] = useState(false);
   const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
 
-  // 1. Transformamos os Mocks em Estados (useState)
+  // Mocks transformados em Estados
   const [classesList, setClassesList] = useState([
     { id: '1', name: 'TDS - 1º Ano', course: 'Téc. em Desenv. de Sistemas', schedule: 'Seg a Sex • 13:00 às 17:00', students: 35, shift: 'Tarde' },
     { id: '2', name: 'Logística - 3º Ano', course: 'Técnico em Logística', schedule: 'Seg a Sex • 07:30 às 11:30', students: 28, shift: 'Manhã' },
@@ -28,13 +28,13 @@ export function ClassesAndMaterials() {
   const filteredClasses = classesList.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()));
   const filteredMaterials = materialsList.filter(m => m.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
-  // 2. Funções para salvar os novos dados
+  // Funções de Cadastro
   const handleAddClass = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
     const newClass = {
-      id: Math.random().toString(), // Gera um ID aleatório temporário
+      id: Math.random().toString(),
       name: formData.get('name') as string,
       course: formData.get('course') as string,
       schedule: formData.get('schedule') as string,
@@ -42,8 +42,8 @@ export function ClassesAndMaterials() {
       shift: formData.get('shift') as string,
     };
 
-    setClassesList([...classesList, newClass]); // Adiciona na lista
-    setIsClassModalOpen(false); // Fecha o modal
+    setClassesList([...classesList, newClass]);
+    setIsClassModalOpen(false);
   };
 
   const handleAddMaterial = (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,8 +59,8 @@ export function ClassesAndMaterials() {
       total: qty,
     };
 
-    setMaterialsList([...materialsList, newMaterial]); // Adiciona na lista
-    setIsMaterialModalOpen(false); // Fecha o modal
+    setMaterialsList([...materialsList, newMaterial]);
+    setIsMaterialModalOpen(false);
   };
 
   return (
@@ -87,7 +87,6 @@ export function ClassesAndMaterials() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        {/* O botão abre o modal correto dependendo da aba ativa! */}
         <button className="action-btn" onClick={() => activeTab === 'turmas' ? setIsClassModalOpen(true) : setIsMaterialModalOpen(true)}>
           + {activeTab === 'turmas' ? 'Nova Turma' : 'Novo Material'}
         </button>
@@ -114,7 +113,7 @@ export function ClassesAndMaterials() {
           </ClassCard>
         ))}
 
-        {/* ABA DE MATERIAIS (Agora simplificada) */}
+        {/* ABA DE MATERIAIS */}
         {activeTab === 'materiais' && filteredMaterials.map(material => (
           <MaterialCard key={material.id}>
             <div className="icon-wrapper">{material.icon}</div>
@@ -129,7 +128,6 @@ export function ClassesAndMaterials() {
       {/* --- MODAL DE NOVA TURMA --- */}
       {isClassModalOpen && (
         <ModalOverlay onClick={() => setIsClassModalOpen(false)}>
-          {/* o e.stopPropagation evita que clicar dentro do modal feche ele */}
           <ModalContent onClick={e => e.stopPropagation()}> 
             <h2>Cadastrar Nova Turma</h2>
             <form onSubmit={handleAddClass}>
@@ -141,8 +139,10 @@ export function ClassesAndMaterials() {
                 <label>Nome do Curso Mestre</label>
                 <input name="course" required placeholder="Ex: Técnico em Administração" />
               </div>
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div className="input-group" style={{ flex: 1 }}>
+              
+              {/* Agora usando classe para facilitar a responsividade */}
+              <div className="form-row">
+                <div className="input-group">
                   <label>Turno</label>
                   <select name="shift">
                     <option value="Manhã">Manhã</option>
@@ -150,11 +150,12 @@ export function ClassesAndMaterials() {
                     <option value="Noite">Noite</option>
                   </select>
                 </div>
-                <div className="input-group" style={{ flex: 1 }}>
+                <div className="input-group">
                   <label>Qtd. Alunos</label>
                   <input name="students" type="number" required />
                 </div>
               </div>
+
               <div className="input-group">
                 <label>Horário (Ex: Seg a Sex • 13:00 às 17:00)</label>
                 <input name="schedule" required />
@@ -179,12 +180,13 @@ export function ClassesAndMaterials() {
                 <label>Nome do Equipamento</label>
                 <input name="name" required placeholder="Ex: Cones de Agilidade" />
               </div>
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div className="input-group" style={{ flex: 1 }}>
+
+              <div className="form-row">
+                <div className="input-group">
                   <label>Ícone (Emoji)</label>
                   <input name="icon" required placeholder="Ex: 🚧" />
                 </div>
-                <div className="input-group" style={{ flex: 1 }}>
+                <div className="input-group">
                   <label>Quantidade Total</label>
                   <input name="quantity" type="number" required min="1" />
                 </div>

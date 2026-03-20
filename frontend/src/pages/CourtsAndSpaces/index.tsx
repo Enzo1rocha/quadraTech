@@ -107,8 +107,9 @@ export function CourtsAndSpaces() {
                 <input name="name" required placeholder="Ex: Quadra Externa 02" />
               </div>
               
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div className="input-group" style={{ flex: 1 }}>
+              {/* Ajuste: Substituição de estilos inline pela classe form-row */}
+              <div className="form-row">
+                <div className="input-group select-group">
                   <label>Tipo de Piso/Espaço</label>
                   <select name="type">
                     <option value="Poliesportiva">Poliesportiva</option>
@@ -118,7 +119,7 @@ export function CourtsAndSpaces() {
                     <option value="Outro">Outro</option>
                   </select>
                 </div>
-                <div className="input-group" style={{ width: '100px' }}>
+                <div className="input-group icon-group">
                   <label>Ícone</label>
                   <input name="icon" required placeholder="Ex: 🏀" defaultValue="🏟️" />
                 </div>

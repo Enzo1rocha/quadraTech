@@ -189,8 +189,10 @@ export function TeamAndCommunication() {
                 <label>Mensagem</label>
                 <textarea name="message" required placeholder="Escreva os detalhes aqui..." />
               </div>
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div className="input-group" style={{ flex: 1 }}>
+              
+              {/* Ajuste para responsividade com a classe form-row */}
+              <div className="form-row">
+                <div className="input-group select-group">
                   <label>Tipo (Cor do card)</label>
                   <select name="type">
                     <option value="info">Informação (Azul)</option>
@@ -198,8 +200,8 @@ export function TeamAndCommunication() {
                     <option value="success">Boa Notícia (Verde)</option>
                   </select>
                 </div>
-                <div className="input-group" style={{ flex: 1 }}>
-                  <label>Expira em (Apaga sozinho)</label>
+                <div className="input-group select-group">
+                  <label>Expira em</label>
                   <select name="expires">
                     <option value="24h">24 Horas</option>
                     <option value="3 dias">3 Dias</option>
@@ -208,6 +210,7 @@ export function TeamAndCommunication() {
                   </select>
                 </div>
               </div>
+
               <div className="modal-actions">
                 <button type="button" className="cancel" onClick={() => setIsNoticeModalOpen(false)}>Cancelar</button>
                 <button type="submit" className="save">Publicar Aviso</button>

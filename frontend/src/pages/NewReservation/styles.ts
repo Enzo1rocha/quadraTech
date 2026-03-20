@@ -4,13 +4,17 @@ export const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  max-width: 800px; /* Limita a largura para o formulário não ficar esticado demais */
-  margin: 0 auto; /* Centraliza na tela */
+  max-width: 800px;
+  margin: 0 auto;
   animation: fadeIn 0.4s ease-out;
 
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    gap: 16px;
   }
 `;
 
@@ -31,6 +35,7 @@ export const PageHeader = styled.header`
     cursor: pointer;
     color: #64748B;
     transition: all 0.2s;
+    flex-shrink: 0;
 
     &:hover {
       background: #E2E8F0;
@@ -42,6 +47,10 @@ export const PageHeader = styled.header`
     font-size: 24px;
     font-weight: 700;
     color: ${({ theme }) => theme.colors.text};
+
+    @media (max-width: 768px) {
+      font-size: 20px;
+    }
   }
 `;
 
@@ -54,6 +63,12 @@ export const FormCard = styled.form`
   display: flex;
   flex-direction: column;
   gap: 32px;
+
+  /* No celular, reduzimos o padding e o espaço interno para aproveitar melhor a tela */
+  @media (max-width: 768px) {
+    padding: 20px;
+    gap: 24px;
+  }
 `;
 
 export const SectionTitle = styled.h3`
@@ -69,6 +84,12 @@ export const FormRow = styled.div<{ $columns?: number }>`
   display: grid;
   grid-template-columns: ${({ $columns }) => ($columns ? `repeat(${$columns}, 1fr)` : '1fr')};
   gap: 20px;
+
+  /* AQUI ACONTECE A MÁGICA: Quebra as colunas para 1 só em telas pequenas */
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 `;
 
 export const InputGroup = styled.div`
@@ -92,6 +113,7 @@ export const InputGroup = styled.div`
     transition: all 0.2s;
     outline: none;
     font-family: inherit;
+    width: 100%;
 
     &:focus {
       border-color: ${({ theme }) => theme.colors.primary};
@@ -104,16 +126,18 @@ export const InputGroup = styled.div`
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    /* Adicionando um ícone de seta customizado via SVG no background */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
   }
 `;
 
 export const MaterialsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  /* Reduzi o minmax de 180px para 140px para caber 2 checkboxes lado a lado no celular */
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 12px;
 `;
 
@@ -126,6 +150,7 @@ export const CheckboxCard = styled.label`
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s;
+  user-select: none; /* Evita selecionar o texto ao clicar rápido */
 
   &:hover {
     background-color: #F8FAFC;
@@ -136,12 +161,14 @@ export const CheckboxCard = styled.label`
     height: 18px;
     accent-color: ${({ theme }) => theme.colors.primary};
     cursor: pointer;
+    flex-shrink: 0;
   }
 
   span {
     font-size: 14px;
     font-weight: 500;
     color: ${({ theme }) => theme.colors.text};
+    line-height: 1.2;
   }
 `;
 
@@ -160,6 +187,9 @@ export const FormActions = styled.div`
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   button.cancel {
@@ -182,6 +212,16 @@ export const FormActions = styled.div`
     &:hover {
       background: ${({ theme }) => theme.colors.primaryHover || '#004A80'};
       transform: translateY(-1px);
+    }
+  }
+
+  /* No Mobile: Botões ficam empilhados e com 100% da largura */
+  @media (max-width: 768px) {
+    flex-direction: column-reverse; /* Inverte a ordem: Confirmar fica em cima, Cancelar embaixo */
+    gap: 12px;
+
+    button {
+      width: 100%;
     }
   }
 `;

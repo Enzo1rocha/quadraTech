@@ -10,6 +10,11 @@ export const PageContainer = styled.div`
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  /* Reduz o respiro no celular */
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
 `;
 
 export const PageHeader = styled.header`
@@ -19,9 +24,15 @@ export const PageHeader = styled.header`
 
   h1 {
     font-size: 28px;
-    font-weight: 800;
+    font-weight: 700;
     color: ${({ theme }) => theme.colors.text};
     letter-spacing: -0.5px;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 24px;
+    }
   }
 `;
 
@@ -47,7 +58,7 @@ export const FilterBar = styled.div`
     padding: 0 16px;
 
     &:focus-within { border-color: ${({ theme }) => theme.colors.primary}; }
-    svg { color: #94A3B8; width: 18px; height: 18px; }
+    svg { color: #94A3B8; width: 18px; height: 18px; flex-shrink: 0; }
     input { border: none; background: transparent; padding: 12px; width: 100%; outline: none; font-size: 14px; }
   }
 
@@ -64,6 +75,19 @@ export const FilterBar = styled.div`
     cursor: pointer;
     &:focus { border-color: ${({ theme }) => theme.colors.primary}; }
   }
+
+  /* Empilha os filtros no mobile */
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+
+    .search-box, .filter-select {
+      width: 100%;
+      min-width: 100%;
+      flex: none;
+    }
+  }
 `;
 
 /* --- LISTA DE HISTÓRICO (TIMELINE) --- */
@@ -76,6 +100,10 @@ export const HistoryList = styled.div`
   padding: 24px;
   border: 1px solid rgba(0,0,0,0.04);
   box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
 `;
 
 export const HistoryItem = styled.div`
@@ -151,6 +179,27 @@ export const HistoryItem = styled.div`
       background: #FFFFFF;
       border: 1px solid #E2E8F0;
       color: #64748B;
+    }
+  }
+
+  /* No celular, os metadados (hora e badge) descem para criar um rodapé no card */
+  @media (max-width: 768px) {
+    flex-wrap: wrap; /* Permite que os itens quebrem linha */
+    align-items: flex-start;
+
+    .content {
+      /* Garante que o texto ocupe o máximo do espaço ao lado do ícone antes de quebrar */
+      min-width: 200px; 
+    }
+
+    .meta {
+      width: 100%;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      margin-top: 4px;
+      border-top: 1px solid #E2E8F0; /* Linha sutil separando a ação da data */
     }
   }
 `;

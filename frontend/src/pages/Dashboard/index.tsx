@@ -40,7 +40,6 @@ export function Dashboard() {
     { id: 'q1', name: 'Ginásio Coberto', icon: 'indoor', status: 'ocupado' as const, detail: 'Prof. Fernando • Futsal' },
     { id: 'q2', name: 'Campo Sintético', icon: 'outdoor', status: 'livre' as const, detail: 'Livre até às 14:00' },
     { id: 'q3', name: 'Quadra Poliesportiva', icon: 'court', status: 'manutencao' as const, detail: 'Troca de rede • Previsão: Amanhã' },
-    // Se você adicionar ou remover itens daqui, o layout se adapta sozinho!
   ];
 
   // Lógica para definir se tem reservas no dia selecionado
@@ -57,8 +56,8 @@ export function Dashboard() {
   return (
     <DashboardContainer>
       <Header>
-        <div>
-          <WelcomeTitle>Olá, Professor Fernando! 👋</WelcomeTitle>
+        <div className="title-group">
+          <WelcomeTitle>Olá, Professor Fernando!</WelcomeTitle>
           <DateSubtitle>Terça-feira, 24 de Outubro</DateSubtitle>
         </div>
         <ActionButton onClick={() => {navigate("/nova-reserva")}}>
@@ -68,7 +67,6 @@ export function Dashboard() {
       </Header>
 
       <StatsGrid>
-        {/* ... (os 4 StatCards continuam iguais ao código anterior) ... */}
         <StatCard><StatHeader>Reservas de Hoje <div></div></StatHeader><StatValue>08</StatValue></StatCard>
         <StatCard><StatHeader>Turmas Ativas <div></div></StatHeader><StatValue>12</StatValue></StatCard>
         <StatCard><StatHeader>Quadras Livres <div></div></StatHeader><StatValue>02 <span style={{fontSize: '14px', fontWeight: '500', color: '#64748B'}}>de 04</span></StatValue></StatCard>
@@ -76,12 +74,10 @@ export function Dashboard() {
       </StatsGrid>
 
       <MainGrid>
-
         <LeftColumn>
             <Card>
                 <CardTitle>
                     Agenda de Aulas
-                    {/* NOVO: Navegador de Datas */}
                     <DateNavigator>
                     <NavArrow onClick={() => setDayOffset(prev => prev - 1)}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -94,7 +90,6 @@ export function Dashboard() {
                 </CardTitle>
 
                 <ReservationList>
-                    {/* NOVO: Renderização Condicional (Lista vs Empty State) */}
                     {currentReservations.length > 0 ? (
                     currentReservations.map(res => (
                         <ClickableReservationItem 
@@ -134,7 +129,6 @@ export function Dashboard() {
                 <SpaceCard key={space.id} $status={space.status}>
                   <SpaceHeader>
                     <div className="icon-box">
-                      {/* Um ícone genérico de quadra */}
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
                     </div>
                     <strong>{space.name}</strong>
@@ -152,7 +146,6 @@ export function Dashboard() {
 
         </LeftColumn>
 
-        {/* ... (O Card de Avisos continua igual, pode manter o código anterior aqui) ... */}
         <Card>
           <CardTitle>Avisos Recentes</CardTitle>
           <NoticeList>
@@ -189,7 +182,7 @@ export function Dashboard() {
         </Card>
       </MainGrid>
 
-      {/* NOVO: Drawer (A Gaveta Lateral) */}
+      {/* Drawer (A Gaveta Lateral) */}
       <DrawerOverlay $isOpen={!!selectedReservation} onClick={() => setSelectedReservation(null)} />
       <DrawerContainer $isOpen={!!selectedReservation}>
         <DrawerHeader>
@@ -199,7 +192,6 @@ export function Dashboard() {
           </button>
         </DrawerHeader>
         
-        {/* Só renderiza o conteúdo se tiver uma reserva selecionada */}
         {selectedReservation && (
           <DrawerContent>
             <div className="info-group">

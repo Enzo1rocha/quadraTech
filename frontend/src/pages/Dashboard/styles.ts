@@ -10,20 +10,34 @@ export const DashboardContainer = styled.div`
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  @media (max-width: 768px) {
+    gap: 24px;
+  }
 `;
 
 export const Header = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
 `;
 
 export const WelcomeTitle = styled.h1`
   font-size: 28px;
-  font-weight: 800;
+  font-weight: 700;
   color: ${({ theme }) => theme.colors.text};
   letter-spacing: -0.5px;
   margin-bottom: 4px;
+
+  @media (max-width: 768px) {
+    font-size: 22px;
+  }
 `;
 
 export const DateSubtitle = styled.p`
@@ -56,12 +70,27 @@ export const ActionButton = styled.button`
     width: 20px;
     height: 20px;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: center;
+  }
 `;
 
 export const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
+
+  /* No Tablet, vira 2 colunas */
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* No Celular bem pequeno, vira 1 coluna */
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const StatCard = styled.div`
@@ -83,7 +112,6 @@ export const StatHeader = styled.div`
   font-weight: 500;
   font-size: 14px;
 
-  /* O ícone ganha um fundo redondinho e suave da cor do tema */
   div {
     width: 36px;
     height: 36px;
@@ -102,15 +130,24 @@ export const StatHeader = styled.div`
 `;
 
 export const StatValue = styled.span`
-  font-size: 32px;
-  font-weight: 800;
+  font-size: 30px;
+  font-weight: 700;
   color: ${({ theme }) => theme.colors.text};
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
 `;
 
 export const MainGrid = styled.div`
   display: grid;
-  grid-template-columns: 2fr 1fr; /* 2/3 da tela para reservas, 1/3 para avisos/histórico */
+  grid-template-columns: 2fr 1fr;
   gap: 24px;
+
+  /* No Tablet/Mobile, a área de Avisos cai para baixo (1 coluna) */
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const Card = styled.div`
@@ -122,6 +159,10 @@ export const Card = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
 `;
 
 export const CardTitle = styled.h2`
@@ -132,13 +173,10 @@ export const CardTitle = styled.h2`
   justify-content: space-between;
   align-items: center;
 
-  button {
-    background: transparent;
-    border: none;
-    color: ${({ theme }) => theme.colors.primary};
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
   }
 `;
 
@@ -153,13 +191,20 @@ export const ReservationItem = styled.div`
   align-items: center;
   padding: 16px;
   border-radius: 16px;
-  background-color: #F8FAFC; /* Fundo super clarinho */
+  background-color: #F8FAFC;
   border-left: 4px solid ${({ theme }) => theme.colors.primary};
   gap: 16px;
   transition: transform 0.2s ease;
 
   &:hover {
-    transform: translateX(4px); /* Desliza pra direita ao passar o mouse */
+    transform: translateX(4px);
+  }
+
+  /* No celular, os itens quebram linha se não couberem */
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 `;
 
@@ -181,7 +226,6 @@ export const InfoBlock = styled.div`
   span { color: #64748B; font-size: 13px; }
 `;
 
-/* Badges bonitinhos para o Status */
 export const StatusBadge = styled.span<{ status: 'active' | 'pending' | 'finished' }>`
   padding: 6px 12px;
   border-radius: 20px;
@@ -189,9 +233,9 @@ export const StatusBadge = styled.span<{ status: 'active' | 'pending' | 'finishe
   font-weight: 600;
 
   ${({ status, theme }) => {
-    if (status === 'active') return `background-color: #DCFCE7; color: #166534;`; // Verde
-    if (status === 'pending') return `background-color: ${theme.colors.primary}1A; color: ${theme.colors.primary};`; // Azul
-    return `background-color: #F1F5F9; color: #475569;`; // Cinza
+    if (status === 'active') return `background-color: #DCFCE7; color: #166534;`; 
+    if (status === 'pending') return `background-color: ${theme.colors.primary}1A; color: ${theme.colors.primary};`; 
+    return `background-color: #F1F5F9; color: #475569;`; 
   }}
 `;
 
@@ -221,6 +265,7 @@ export const NoticeItem = styled.div<{ type?: 'warning' }>`
     justify-content: center;
     background-color: ${({ type }) => type === 'warning' ? '#FEF08A' : '#E0F2FE'};
     color: ${({ type }) => type === 'warning' ? '#854D0E' : '#0284C7'};
+    flex-shrink: 0;
 
     svg { width: 16px; height: 16px; }
   }
@@ -241,6 +286,11 @@ export const DateNavigator = styled.div`
   padding: 6px;
   border-radius: 12px;
   border: 1px solid rgba(0,0,0,0.03);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+  }
 `;
 
 export const NavArrow = styled.button`
@@ -271,7 +321,6 @@ export const CurrentDateLabel = styled.span`
   text-align: center;
 `;
 
-/* --- ESTADO VAZIO (EMPTY STATE) --- */
 export const EmptyState = styled.div`
   display: flex;
   flex-direction: column;
@@ -289,18 +338,10 @@ export const EmptyState = styled.div`
     color: #CBD5E1;
   }
 
-  p {
-    font-size: 16px;
-    font-weight: 500;
-    color: #64748B;
-  }
-
-  span {
-    font-size: 14px;
-  }
+  p { font-size: 16px; font-weight: 500; color: #64748B; }
+  span { font-size: 14px; }
 `;
 
-/* --- DRAWER (GAVETA LATERAL) --- */
 export const DrawerOverlay = styled.div<{ $isOpen: boolean }>`
   position: fixed;
   top: 0;
@@ -320,7 +361,7 @@ export const DrawerContainer = styled.div<{ $isOpen: boolean }>`
   top: 0;
   right: 0;
   width: 100%;
-  max-width: 400px;
+  max-width: 400px; /* Em telas maiores trava em 400px, em celulares fica 100% */
   height: 100vh;
   background-color: #FFFFFF;
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
@@ -338,11 +379,7 @@ export const DrawerHeader = styled.div`
   padding: 24px;
   border-bottom: 1px solid #F1F5F9;
 
-  h3 {
-    font-size: 18px;
-    font-weight: 700;
-    color: ${({ theme }) => theme.colors.text};
-  }
+  h3 { font-size: 18px; font-weight: 700; color: ${({ theme }) => theme.colors.text}; }
 
   button {
     background: #F1F5F9;
@@ -371,7 +408,6 @@ export const DrawerContent = styled.div`
   gap: 24px;
   overflow-y: auto;
 
-  /* Exemplo de estilo para as informações dentro da gaveta */
   .info-group {
     display: flex;
     flex-direction: column;
@@ -382,27 +418,26 @@ export const DrawerContent = styled.div`
   }
 `;
 
-/* (Modifique o seu ReservationItem atual para adicionar o cursor: pointer) */
 export const ClickableReservationItem = styled(ReservationItem)`
   cursor: pointer;
-  /* O hover que já existe vai dar a sensação de clique */
 `;
 
-
-/* --- LAYOUT DA COLUNA ESQUERDA --- */
 export const LeftColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
 `;
 
-/* --- STATUS EM TEMPO REAL (ESPAÇOS) --- */
 export const RealTimeGrid = styled.div`
   display: grid;
-  /* A MÁGICA DO 1 a N ESTÁ AQUI: */
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 16px;
   margin-top: 8px;
+
+  /* No celular pequeno, forçamos 1 coluna para não espremer os cards das quadras */
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const SpaceCard = styled.div<{ $status: 'livre' | 'ocupado' | 'manutencao' }>`
@@ -418,11 +453,8 @@ export const SpaceCard = styled.div<{ $status: 'livre' | 'ocupado' | 'manutencao
   overflow: hidden;
   transition: transform 0.2s ease;
 
-  &:hover {
-    transform: translateY(-2px);
-  }
+  &:hover { transform: translateY(-2px); }
 
-  /* Barrinha lateral colorida para identificação rápida */
   &::before {
     content: '';
     position: absolute;
@@ -431,9 +463,9 @@ export const SpaceCard = styled.div<{ $status: 'livre' | 'ocupado' | 'manutencao
     bottom: 0;
     width: 4px;
     background-color: ${({ $status, theme }) => {
-      if ($status === 'livre') return '#10B981'; // Verde
-      if ($status === 'ocupado') return theme.colors.primary || '#0284C7'; // Azul
-      return '#F59E0B'; // Amarelo/Laranja para manutenção
+      if ($status === 'livre') return '#10B981';
+      if ($status === 'ocupado') return theme.colors.primary || '#0284C7';
+      return '#F59E0B';
     }};
   }
 `;
@@ -452,15 +484,12 @@ export const SpaceHeader = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0; /* Impede do ícone amassar no celular */
 
     svg { width: 20px; height: 20px; }
   }
 
-  strong {
-    font-size: 15px;
-    color: ${({ theme }) => theme.colors.text};
-    line-height: 1.2;
-  }
+  strong { font-size: 15px; color: ${({ theme }) => theme.colors.text}; line-height: 1.2; }
 `;
 
 export const SpaceStatus = styled.div<{ $status: 'livre' | 'ocupado' | 'manutencao' }>`
@@ -480,7 +509,6 @@ export const SpaceStatus = styled.div<{ $status: 'livre' | 'ocupado' | 'manutenc
       return '#F59E0B';
     }};
 
-    /* Bolinha pulsante para dar ideia de "Ao vivo" */
     &::before {
       content: '';
       width: 8px;
@@ -493,10 +521,7 @@ export const SpaceStatus = styled.div<{ $status: 'livre' | 'ocupado' | 'manutenc
     }
   }
 
-  span.detail {
-    font-size: 12px;
-    color: #94A3B8;
-  }
+  span.detail { font-size: 12px; color: #94A3B8; }
 
   @keyframes pulse {
     0% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.4); }

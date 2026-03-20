@@ -13,6 +13,7 @@ import TeamAndCommunication from './pages/TeamAndComunication';
 import History from './pages/History';
 import Help from './pages/Help';
 import NotFound from './pages/NotFound';
+import Settings from './pages/Settings';
 import { DefaultLayout } from './layouts/DefaultLayout';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/equipe" element={<TeamAndCommunication />} />
           <Route path="/historico" element={<History />} />
           <Route path="/ajuda" element={<Help />} />
+          <Route path="/configuracoes" element={<Settings />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
