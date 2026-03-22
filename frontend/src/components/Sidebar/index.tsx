@@ -40,7 +40,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <LogoArea>
           <div className="logo-group" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div />
-            <span>Play</span>
+            <span>QuadraTech</span>
           </div>
           
           {/* Botão de X só aparece no mobile */}

@@ -25,7 +25,7 @@ function Login() {
         <LoginBox>
           <LogoArea>
             <div />
-            <span>Play</span>
+            <span>QuadraTech</span>
           </LogoArea>
 
           <HeaderText>

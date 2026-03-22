@@ -26,7 +26,7 @@ export function DefaultLayout() {
         <MobileHeader>
           <div className="logo">
             <div />
-            <span>Play</span>
+            <span>QuadraTech</span>
           </div>
           
           {/* Botão Hamburger para abrir o menu */}
