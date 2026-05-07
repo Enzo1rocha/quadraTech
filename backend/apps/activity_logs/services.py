@@ -1,4 +1,4 @@
-from apps.activity_logs.models import ActivityLog
+from .models import ActivityLog
 
 def log_activity(user, action_type, entity_type, entity_id, description, icon, metadata=None):
     ActivityLog.objects.create(

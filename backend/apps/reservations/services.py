@@ -1,4 +1,4 @@
-from apps.reservations.models import Reservation
+from .models import Reservation
 
 
 # checagem de conflitos de horário para usuário, turma e quadra
