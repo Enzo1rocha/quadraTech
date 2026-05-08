@@ -37,3 +37,56 @@ class MeSerializer(serializers.ModelSerializer):
             'telephone',
             'profile_image_url',
         ]
+
+
+class UserListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'name',
+            'email',
+            'role',
+            'position',
+            'is_active',
+        ]
+
+
+class CreateUserSerializer(serializers.ModelSerializer):
+
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'name',
+            'email',
+            'password',
+            'role',
+            'position',
+            'telephone',
+        ]
+
+    def create(self, validated_data):
+
+        password = validated_data.pop('password')
+
+        user = User.objects.create_user(
+            password=password,
+            **validated_data
+        )
+
+        return user
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'name',
+            'position',
+            'telephone',
+            'profile_image_url',
+        ]

@@ -2,10 +2,30 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from apps.users.permissions import IsAdmin, isTeacher, IsDirector
+
+from apps.users.permissions import (
+    IsAdmin,
+    isTeacher,
+    IsDirector,
+    IsAdminOrSelf
+)
+
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import LoginSerializer, MeSerializer
+from apps.users.models import User
 from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateAPIView,
+    DestroyAPIView
+)
+
+from .serializers import (
+    LoginSerializer,
+    MeSerializer,
+    UserListSerializer,
+    CreateUserSerializer,
+    UpdateUserSerializer
+)
 
 class LoginView(APIView):
 
@@ -107,7 +127,7 @@ class CreateUserView(APIView):
         IsAuthenticated,
         IsAdmin
     ]
-
+    
     def post(self, request):
         return Response({
             "message": "Somente admin acessa"
@@ -122,3 +142,40 @@ class MeView(APIView):
         serializer = MeSerializer(request.user)
 
         return Response(serializer.data)
+
+
+class UserListCreateView(ListCreateAPIView):
+
+    queryset = User.objects.filter(is_active=True)
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def get_serializer_class(self):
+
+        if self.request.method == 'POST':
+            return CreateUserSerializer
+
+        return UserListSerializer
+
+
+class UserDetailView(RetrieveUpdateAPIView):
+
+    queryset = User.objects.all()
+    permission_classes = [
+        IsAuthenticated,
+        IsAdminOrSelf
+    ]
+    
+    serializer_class = UpdateUserSerializer
+
+    def get_serializer_class(self):
+        return UpdateUserSerializer
+
+
+class UserDeactivateView(DestroyAPIView):
+
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
