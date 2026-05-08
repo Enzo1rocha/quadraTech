@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'apps.help_center',
     'apps.classes',
     'apps.activity_logs',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +52,14 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'core.authentication.CookieJWTAuthentication',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'QuadraTech API',
+    'DESCRIPTION': 'API para gerenciamento de quadras esportivas',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 SIMPLE_JWT = {

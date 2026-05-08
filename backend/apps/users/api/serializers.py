@@ -90,3 +90,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             'telephone',
             'profile_image_url',
         ]
+
+    
+class MessageSerializer(serializers.Serializer):
+    message = serializers.CharField()

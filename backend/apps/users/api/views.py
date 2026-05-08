@@ -16,7 +16,8 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateAPIView,
-    DestroyAPIView
+    DestroyAPIView,
+    GenericAPIView
 )
 
 from .serializers import (
@@ -24,17 +25,27 @@ from .serializers import (
     MeSerializer,
     UserListSerializer,
     CreateUserSerializer,
-    UpdateUserSerializer
+    UpdateUserSerializer,
+    MessageSerializer
 )
 
-class LoginView(APIView):
+from drf_spectacular.utils import extend_schema
+
+
+@extend_schema(
+    tags=['auth'],
+    summary='Login do usuário',
+    request=LoginSerializer,
+    responses={200: MessageSerializer}
+)
+class LoginView(GenericAPIView):
 
     def post(self, request):
-        serializer = LoginSerializer(data=request.data)
+        serializer_class = LoginSerializer(data=request.data)
 
-        serializer.is_valid(raise_exception=True)
+        serializer_class.is_valid(raise_exception=True)
 
-        user = serializer.validated_data['user']
+        user = serializer_class.validated_data['user']
 
         refresh = RefreshToken.for_user(user)
 
@@ -61,7 +72,12 @@ class LoginView(APIView):
         return response
 
 
-class LogoutView(APIView):
+@extend_schema(
+    tags=['auth'],
+    summary='Logout do usuário',
+    responses={200: MessageSerializer}
+)
+class LogoutView(GenericAPIView):
 
     permission_classes = [IsAuthenticated]
 
@@ -83,7 +99,12 @@ class LogoutView(APIView):
         return response
 
 
-class RefreshView(APIView):
+@extend_schema(
+    tags=['auth'],
+    summary='Renovação do token',
+    responses={200: MessageSerializer}
+)
+class RefreshView(GenericAPIView):
 
     def post(self, request):
 
@@ -120,8 +141,12 @@ class RefreshView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-
-class CreateUserView(APIView):
+@extend_schema(
+    tags=['users'],
+    summary='Endpoint de teste para acesso de admin',
+    responses={200: MessageSerializer}
+)
+class CreateUserView(GenericAPIView):
 
     permission_classes = [
         IsAuthenticated,
@@ -134,7 +159,12 @@ class CreateUserView(APIView):
         })
     
 
-class MeView(APIView):
+@extend_schema(
+    tags=['auth'],
+    summary='Retorna os dados do usuário autenticado',
+    responses={200: MeSerializer}
+)
+class MeView(GenericAPIView):
 
     permission_classes = [IsAuthenticated]
 
@@ -144,6 +174,11 @@ class MeView(APIView):
         return Response(serializer.data)
 
 
+@extend_schema(
+    tags=['auth'],
+    summary="Lista de usuários e criação de usuário",
+    request=CreateUserSerializer,
+)
 class UserListCreateView(ListCreateAPIView):
 
     queryset = User.objects.filter(is_active=True)
@@ -157,6 +192,11 @@ class UserListCreateView(ListCreateAPIView):
         return UserListSerializer
 
 
+@extend_schema(
+    tags=['auth'],
+    summary='Detalhes do usuário e atualização',
+    request=UpdateUserSerializer,
+)
 class UserDetailView(RetrieveUpdateAPIView):
 
     queryset = User.objects.all()
@@ -171,6 +211,10 @@ class UserDetailView(RetrieveUpdateAPIView):
         return UpdateUserSerializer
 
 
+@extend_schema(
+    tags=['auth'],
+    summary='Desativa um usuário',
+)
 class UserDeactivateView(DestroyAPIView):
 
     queryset = User.objects.all()
