@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
+from apps.users.models import User
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -21,4 +22,18 @@ class LoginSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
-    
+
+
+class MeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'name',
+            'email',
+            'role',
+            'position',
+            'telephone',
+            'profile_image_url',
+        ]

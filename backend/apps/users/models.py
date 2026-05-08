@@ -5,6 +5,12 @@ from .managers import UserManager
 
 # Create your models here.
 
+class UserRoles(models.TextChoices):
+    ADMIN = 'ADMIN', 'Administrador'
+    DIRECTOR = 'DIRECTOR', 'Diretoria'
+    TEACHER = 'TEACHER', 'Professor'
+    SUPPORT = 'SUPPORT', 'Suporte'
+
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
@@ -12,7 +18,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     telephone = models.CharField(max_length=20, unique=True)
     
-    role = models.CharField(max_length=20)
+    role = models.CharField(
+    max_length=20,
+    choices=UserRoles.choices,
+    default=UserRoles.TEACHER
+    )
     position = models.CharField(max_length=100)
     
     profile_image_url = models.URLField(blank=True, null=True)
