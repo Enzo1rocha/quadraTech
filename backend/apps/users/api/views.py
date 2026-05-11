@@ -30,6 +30,8 @@ from .serializers import (
 )
 
 from drf_spectacular.utils import extend_schema
+from apps.activity_logs.services import create_log
+from apps.activity_logs.models import ActivityLog
 
 
 @extend_schema(
@@ -68,6 +70,15 @@ class LoginView(GenericAPIView):
             secure=False,
             samesite='Lax'
         )
+        
+        create_log(
+            user=user,
+            action_type=ActivityLog.ActionChoices.LOGIN,
+            entity_type=ActivityLog.EntityChoices.USER,
+            entity_id=user.id,
+            description=f'{user.name} fez login',
+            icon='🔑'
+        )
 
         return response
 
@@ -95,6 +106,15 @@ class LogoutView(GenericAPIView):
 
         response.delete_cookie('access_token')
         response.delete_cookie('refresh_token')
+
+        create_log(
+            user=request.user,
+            action_type=ActivityLog.ActionChoices.LOGOUT,
+            entity_type=ActivityLog.EntityChoices.USER,
+            entity_id=request.user.id,
+            description=f'{request.user.name} fez logout',
+            icon='🚪'
+        )
 
         return response
 
@@ -140,25 +160,7 @@ class RefreshView(GenericAPIView):
                 {'error': 'Refresh token inválido'},
                 status=status.HTTP_401_UNAUTHORIZED
             )
-
-@extend_schema(
-    tags=['users'],
-    summary='Endpoint de teste para acesso de admin',
-    responses={200: MessageSerializer}
-)
-class CreateUserView(GenericAPIView):
-
-    permission_classes = [
-        IsAuthenticated,
-        IsAdmin
-    ]
     
-    def post(self, request):
-        return Response({
-            "message": "Somente admin acessa"
-        })
-    
-
 @extend_schema(
     tags=['auth'],
     summary='Retorna os dados do usuário autenticado',
@@ -208,6 +210,14 @@ class UserDetailView(RetrieveUpdateAPIView):
     serializer_class = UpdateUserSerializer
 
     def get_serializer_class(self):
+        create_log(
+            user=self.request.user,
+            action_type=ActivityLog.ActionChoices.UPDATE,
+            entity_type=ActivityLog.EntityChoices.USER,
+            entity_id=self.get_object().id,
+            description=f'{self.request.user.name} atualizou os dados do usuário {self.get_object().name}',
+            icon='👤'
+        )
         return UpdateUserSerializer
 
 
@@ -222,4 +232,14 @@ class UserDeactivateView(DestroyAPIView):
 
     def perform_destroy(self, instance):
         instance.is_active = False
+        
+        create_log(
+            user=self.request.user,
+            action_type=ActivityLog.ActionChoices.DELETE,
+            entity_type=ActivityLog.EntityChoices.USER,
+            entity_id=instance.id,
+            description=f'{self.request.user.name} desativou o usuário {instance.name}',
+            icon='👤'
+        )
+        
         instance.save()

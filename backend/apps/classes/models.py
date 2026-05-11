@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 import uuid
 
 # Create your models here.
@@ -11,6 +12,16 @@ class ClassShift(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class WeekDay(models.TextChoices):
+    MON = 'MON', 'Segunda'
+    TUE = 'TUE', 'Terça'
+    WED = 'WED', 'Quarta'
+    THU = 'THU', 'Quinta'
+    FRI = 'FRI', 'Sexta'
+    SAT = 'SAT', 'Sábado'
+    SUN = 'SUN', 'Domingo'
 
 
 class Class(models.Model):
@@ -26,7 +37,13 @@ class Class(models.Model):
         related_name='classes'
     )
 
-    class_days = models.CharField(max_length=20)  # 'MON-FRI'
+    class_days = ArrayField(
+        models.CharField(
+            max_length=3,
+            choices=WeekDay.choices
+        ),
+        default=list
+    )
     start_time = models.TimeField()
     end_time = models.TimeField()
 

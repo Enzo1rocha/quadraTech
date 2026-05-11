@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from apps.users.models import User
+from apps.activity_logs.services import create_log
+from apps.activity_logs.models import ActivityLog
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -76,7 +78,15 @@ class CreateUserSerializer(serializers.ModelSerializer):
             password=password,
             **validated_data
         )
-
+        
+        create_log(
+            user=self.context['request'].user,
+            action_type=ActivityLog.ActionChoices.CREATE,
+            entity_type=ActivityLog.EntityChoices.USER,
+            entity_id=user.id,
+            description=f'{self.context["request"].user.name} criou um novo usuário',
+            icon='👤'
+        )  
         return user
 
 
@@ -90,7 +100,6 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             'telephone',
             'profile_image_url',
         ]
-
     
 class MessageSerializer(serializers.Serializer):
     message = serializers.CharField()

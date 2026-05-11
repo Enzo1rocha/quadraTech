@@ -1,66 +1,155 @@
-from .models import Reservation
+from .models import Reservation, ReservationMaterial
+from .validators import (
+    check_user_conflict,
+    check_class_conflict,
+    check_venue_conflict,
+    validate_class_schedule_conflict,
+    validate_not_sunday,
+    validate_venue_status,
+    
+    
+    
+    )
+from apps.materials.models import Material
+from rest_framework.exceptions import ValidationError
+from django.db import transaction
+from django.utils import timezone
+from apps.activity_logs.services import create_log
+from apps.activity_logs.models import ActivityLog
+from datetime import datetime
 
-
-# checagem de conflitos de horário para usuário, turma e quadra
-def check_user_conflict(user, date, start_time, end_time):
-    return Reservation.objects.filter(
-        user=user,
-        reservation_date=date,
-        start_time__lt=end_time,
-        end_time__gt=start_time
-    ).exists()
-
-
-def check_class_conflict(class_obj, date, start_time, end_time):
-    return Reservation.objects.filter(
-        class_obj=class_obj,
-        reservation_date=date,
-        start_time__lt=end_time,
-        end_time__gt=start_time
-    ).exists()
-
-
-def check_venue_conflict(venue, date, start_time, end_time):
-    return Reservation.objects.filter(
-        venue=venue,
-        reservation_date=date,
-        start_time__lt=end_time,
-        end_time__gt=start_time
-    ).exists()
     
 
 # criação de reserva com checagem de conflitos
+@transaction.atomic
 def create_reservation(data):
-    # verifica conflito de horário para a quadra
-    venue_conflict = check_venue_conflict(
-        data['venue'],
-        data['reservation_date'],
-        data['start_time'],
-        data['end_time']
-    )
 
-    if venue_conflict:
-        raise Exception("Essa quadra já está ocupada nesse horário")
-    # verifica conflito de horário para o usuário
-    user_conflict = check_user_conflict(
-        data['user'],
-        data['reservation_date'],
-        data['start_time'],
-        data['end_time']
-    )
-
-    if user_conflict:
-        raise Exception("Você já tem uma reserva nesse horário")
+    materials_data = data.pop('materials', [])
     
-    # verifica conflito de horário para a turma
-    class_conflict = check_class_conflict(
+    if validate_venue_status(data['venue']):
+        raise ValidationError(
+            'Essa quadra está bloqueada no momento'
+        )
+    
+    if validate_not_sunday(data['reservation_date']):
+        raise ValidationError(
+            'Não é permitido fazer reservas para domingos'
+        )
+    
+    
+    
+    if check_venue_conflict(data['venue'], data['reservation_date'], data['start_time'], data['end_time']
+    ):
+        raise ValidationError(
+            'Essa quadra já está ocupada nesse horário'
+        )
+    
+    if check_user_conflict(data['user'], data['reservation_date'], data['start_time'], data['end_time']
+    ):
+        raise ValidationError(
+            'Você já possui uma reserva nesse horário'
+        )
+    
+    if check_class_conflict(
         data['class_obj'],
         data['reservation_date'],
         data['start_time'],
         data['end_time']
+    ):
+        raise ValidationError(
+            'Essa turma já possui reserva nesse horário'
+        )
+    
+    
+    if validate_class_schedule_conflict(
+        data['class_obj'],
+        data['reservation_date'],
+        data['start_time'],
+        data['end_time']
+    ):
+        raise ValidationError(
+            'Essa turma tem aula nesse horário'
+        )
+    
+    reservation = Reservation.objects.create(**data)
+    
+    for item in materials_data:
+        material = Material.objects.get(
+            id=item['material_id']
+        )
+        
+        quantity = item['quantity']
+        
+        if material.available_quantity < quantity:
+
+            raise ValidationError(
+                f'Estoque insuficiente para {material.name}'
+            )
+    
+        ReservationMaterial.objects.create(
+            reservation=reservation,
+            material=material,
+            quantity=quantity
+        )
+        
+        material.available_quantity -= quantity
+        material.save()
+    
+    create_log(
+        user=data['user'],
+        action_type=ActivityLog.ActionChoices.CREATE,
+        entity_type=ActivityLog.EntityChoices.RESERVATION,
+        entity_id=reservation.id,
+        description=f'{data["user"].name} criou uma reserva em {data["venue"].name}',
+        icon='✅'
+    )
+        
+    return reservation
+
+
+@transaction.atomic
+def cancel_reservation(reservation, user):
+
+    now = timezone.now()
+
+    # status dinâmico
+    start_datetime = timezone.make_aware(
+        datetime.combine(reservation.reservation_date, reservation.start_time)
     )
 
-    if class_conflict:
-        raise Exception("Essa turma já tem uma reserva nesse horário")
+    end_datetime = timezone.make_aware(
+        datetime.combine(reservation.reservation_date, reservation.end_time)
+    )
 
-    return Reservation.objects.create(**data)
+    if now > end_datetime:
+        raise ValidationError(
+            'Não é possível cancelar uma reserva já finalizada.'
+        )
+
+    if reservation.status == 'CANCELED':
+        raise ValidationError(
+            'Essa reserva já foi cancelada.'
+        )
+
+    reservation_materials = ReservationMaterial.objects.filter(
+        reservation=reservation
+    )
+
+    for rm in reservation_materials:
+        material = rm.material
+        material.available_quantity += rm.quantity
+        material.save()
+
+    reservation.status = 'CANCELED'
+    reservation.save()
+
+    create_log(
+        user=user,
+        action_type=ActivityLog.ActionChoices.CANCEL,
+        entity_type=ActivityLog.EntityChoices.RESERVATION,
+        entity_id=reservation.id,
+        description=f'{user.name} cancelou uma reserva em {reservation.venue.name}',
+        icon='❌'
+    )
+
+    return reservation

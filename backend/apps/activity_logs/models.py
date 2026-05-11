@@ -2,9 +2,29 @@ from django.db import models
 from django.conf import settings
 import uuid
 
-# Create your models here.
-
 class ActivityLog(models.Model):
+
+    # Opções para action_type
+    class ActionChoices(models.TextChoices):
+        CREATE = 'CREATE', 'Criação'
+        UPDATE = 'UPDATE', 'Atualização'
+        DELETE = 'DELETE', 'Exclusão'
+        CANCEL = 'CANCEL', 'Cancelamento'
+        COMPLETE = 'COMPLETE', 'Conclusão'
+        LOGIN = 'LOGIN', 'Login'
+        LOGOUT = 'LOGOUT', 'Logout'
+
+    # Opções para entity_type baseadas nos seus apps
+    class EntityChoices(models.TextChoices):
+        CLASS = 'CLASS', 'Turma/Aula'
+        HELP_CENTER = 'HELP_CENTER', 'Centro de Ajuda'
+        MATERIAL = 'MATERIAL', 'Material'
+        NOTICE = 'NOTICE', 'Aviso'
+        RESERVATION = 'RESERVATION', 'Reserva'
+        USER = 'USER', 'Usuário'
+        VENUE = 'VENUE', 'Local/Espaço'
+        
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     user = models.ForeignKey(
@@ -15,8 +35,17 @@ class ActivityLog(models.Model):
         related_name='activity_logs'
     )
 
-    action_type = models.CharField(max_length=30)  # CREATE, UPDATE, DELETE
-    entity_type = models.CharField(max_length=30)  # RESERVATION, MATERIAL, NOTICE
+    # Aplicando as escolhas aos CharFields
+    action_type = models.CharField(
+        max_length=30,
+        choices=ActionChoices.choices
+    )
+    
+    entity_type = models.CharField(
+        max_length=30,
+        choices=EntityChoices.choices
+    )
+    
     entity_id = models.UUIDField()
 
     description = models.TextField()
@@ -27,4 +56,7 @@ class ActivityLog(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.action_type} - {self.entity_type}"
+        action_label = dict(self.ActionChoices.choices).get(self.action_type, self.action_type)
+        entity_label = dict(self.EntityChoices.choices).get(self.entity_type, self.entity_type)
+        
+        return f"{action_label} - {entity_label}"
