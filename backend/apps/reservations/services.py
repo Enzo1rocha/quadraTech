@@ -93,6 +93,16 @@ def create_reservation(data):
         )
         
         material.available_quantity -= quantity
+        
+        create_log(
+            user=data['user'],
+            action_type=ActivityLog.ActionChoices.USE,
+            entity_type=ActivityLog.EntityChoices.MATERIAL,
+            entity_id=str(material.id),
+            description=f"{data['user'].name} reservou {quantity} de {material.name}",
+            icon='📦'
+        )
+        
         material.save()
     
     create_log(
@@ -138,6 +148,16 @@ def cancel_reservation(reservation, user):
     for rm in reservation_materials:
         material = rm.material
         material.available_quantity += rm.quantity
+        
+        create_log(
+            user=user,
+            action_type=ActivityLog.ActionChoices.RETURN,
+            entity_type=ActivityLog.EntityChoices.MATERIAL,
+            entity_id=str(material.id),
+            description=f"{user.name} cancelou a reserva de {rm.quantity} de {material.name}",
+            icon='📦'
+        )
+        
         material.save()
 
     reservation.status = 'CANCELED'

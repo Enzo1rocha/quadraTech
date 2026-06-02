@@ -31,7 +31,7 @@ class VenueStatus(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return self.status
+        return self.name
 
 
 class Venue(models.Model):

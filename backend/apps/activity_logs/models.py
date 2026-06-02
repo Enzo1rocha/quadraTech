@@ -13,6 +13,8 @@ class ActivityLog(models.Model):
         COMPLETE = 'COMPLETE', 'Conclusão'
         LOGIN = 'LOGIN', 'Login'
         LOGOUT = 'LOGOUT', 'Logout'
+        USE = 'USE', 'Uso'
+        RETURN = 'RETURN', 'Devolução'
 
     # Opções para entity_type baseadas nos seus apps
     class EntityChoices(models.TextChoices):
@@ -49,7 +51,7 @@ class ActivityLog(models.Model):
     entity_id = models.UUIDField()
 
     description = models.TextField()
-    icon = models.CharField(max_length=10)
+    icon = models.CharField(max_length=10, blank=True, null=True)
 
     metadata = models.JSONField(null=True, blank=True)
 

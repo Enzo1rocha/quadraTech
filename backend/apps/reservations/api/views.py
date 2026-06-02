@@ -7,6 +7,7 @@ from collections import defaultdict
 from apps.reservations.models import Reservation
 from apps.reservations.validators import is_valid_date_range
 
+
 from apps.reservations.api.serializers import (
     ReservationCreateSerializer
 )
@@ -15,6 +16,15 @@ from apps.reservations.services import (
     create_reservation,
     cancel_reservation
 )
+from apps.users.permissions import (
+    IsAdmin,
+    IsTeacher,
+    IsDirector,
+    IsSupport,
+    IsAdminOrSelf
+)
+
+
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiResponse, OpenApiExample, OpenApiTypes
 
 
@@ -26,7 +36,7 @@ class ReservationListCreateView(ListCreateAPIView):
 
     serializer_class = ReservationCreateSerializer
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated & (IsAdmin | IsTeacher | IsDirector | IsSupport)]
 
     def perform_create(self, serializer):
 
@@ -155,10 +165,9 @@ class ReservationListCreateView(ListCreateAPIView):
 )
 class ReservationCalendarView(APIView):
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated & (IsAdmin | IsTeacher | IsDirector | IsSupport)]
 
     def get(self, request):
-
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
 
@@ -240,8 +249,7 @@ class ReservationCalendarView(APIView):
 
 class CancelReservationView(APIView):
 
-    permission_classes = [IsAuthenticated]
-
+    permission_classes = [IsAuthenticated & (IsAdmin | IsTeacher | IsDirector | IsSupport)]
     def post(self, request, pk):
 
         try:

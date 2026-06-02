@@ -6,7 +6,20 @@ import uuid
 
 class ClassShift(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=10)  # MANHA, TARDE, NOITE
+    
+    MORNING = 'MORNING'
+    AFTERNOON = 'AFTERNOON'
+    EVENING = 'EVENING'
+    INTEGRAL = 'INTEGRAL'
+
+    SHIFT_CHOICES = (
+        (MORNING, 'Manhã'),
+        (AFTERNOON, 'Tarde'),
+        (EVENING, 'Noite'),
+        (INTEGRAL, 'Integral'),
+    )
+
+    name = models.CharField(max_length=20, choices=SHIFT_CHOICES, default=MORNING)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

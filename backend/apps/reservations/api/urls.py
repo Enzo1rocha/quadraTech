@@ -9,5 +9,5 @@ from apps.reservations.api.views import (
 urlpatterns = [
     path('', ReservationListCreateView.as_view(), name='reservation-list-create'),
     path('calendar/', ReservationCalendarView.as_view()),
-    path('reservations/<uuid:pk>/cancel/', CancelReservationView.as_view()),
+    path('<uuid:pk>/cancel/', CancelReservationView.as_view()),
 ]

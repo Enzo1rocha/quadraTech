@@ -5,8 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 
 from apps.users.permissions import (
     IsAdmin,
-    isTeacher,
+    IsTeacher,
     IsDirector,
+    IsSupport,
     IsAdminOrSelf
 )
 
@@ -184,7 +185,7 @@ class MeView(GenericAPIView):
 class UserListCreateView(ListCreateAPIView):
 
     queryset = User.objects.filter(is_active=True)
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated & (IsAdmin | IsSupport)]
 
     def get_serializer_class(self):
 
@@ -228,7 +229,7 @@ class UserDetailView(RetrieveUpdateAPIView):
 class UserDeactivateView(DestroyAPIView):
 
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated & (IsAdmin | IsSupport)]
 
     def perform_destroy(self, instance):
         instance.is_active = False

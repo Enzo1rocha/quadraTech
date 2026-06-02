@@ -11,6 +11,12 @@ from apps.materials.models import Material
 from apps.activity_logs.models import ActivityLog
 from django.db.models import F
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, inline_serializer
+from apps.users.permissions import (
+    IsAdmin,
+    IsTeacher,
+    IsDirector,
+    IsSupport
+)
 
 
 @extend_schema(
@@ -80,7 +86,7 @@ from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
 )
 class DashboardView(APIView):
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated & (IsAdmin | IsTeacher | IsDirector | IsSupport)]
 
     def get(self, request):
 
@@ -100,7 +106,7 @@ class DashboardView(APIView):
             available_quantity__lt=F('total_quantity')
         ).count()
 
-        recent_logs = ActivityLog.objects.select_related('user').order_by('-created_at')[:5]
+        recent_logs = ActivityLog.objects.select_related('user').order_by('-created_at')[0:5]
 
         logs_data = [
             {
