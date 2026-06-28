@@ -1,20 +1,30 @@
-from django_filters import rest_framework as filters
-from apps.notices.models import Notice
 from django.utils import timezone
+from django_filters import rest_framework as filters
+
+from apps.notices.models import Notice
 
 
 class NoticeFilter(filters.FilterSet):
-    type = filters.UUIDFilter(field_name='type__id')
-    author = filters.UUIDFilter(field_name='author__id')
+
+    type = filters.UUIDFilter(field_name="type")
+
+    author = filters.UUIDFilter(field_name="author")
+
     is_active = filters.BooleanFilter()
 
-    active = filters.BooleanFilter(method='filter_active')
+    active = filters.BooleanFilter(method="filter_active")
 
     class Meta:
         model = Notice
-        fields = ['type', 'author', 'is_active']
+        fields = [
+            "type",
+            "author",
+            "is_active",
+            "active",
+        ]
 
     def filter_active(self, queryset, name, value):
+
         now = timezone.now()
 
         if value:
@@ -22,4 +32,8 @@ class NoticeFilter(filters.FilterSet):
                 is_active=True,
                 expires_at__gt=now
             )
-        return queryset
+
+        return queryset.exclude(
+            is_active=True,
+            expires_at__gt=now
+        )

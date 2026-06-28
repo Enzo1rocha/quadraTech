@@ -48,6 +48,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.reservations.tasks.complete_reservations_task',
         'schedule': 60.0,
     },
+    
+    "expire-notices-every-5-minutes": {
+        "task": "apps.notices.tasks.expire_notices_task",
+        "schedule": 300,
+    },
 }
 
 MIDDLEWARE = [
